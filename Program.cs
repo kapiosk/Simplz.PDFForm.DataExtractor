@@ -7,7 +7,7 @@ app.MapGet("/", () => "Hi!");
 app.MapGet("/Upload", () => Results.Content(@"
 <form action=""/Upload"" enctype=""multipart/form-data"" method=""post"">
     <label for=""files"">Select a file:</label>
-    <input type=""file"" id=""files"" name=""files"" accept="".pdf"" />
+    <input type=""file"" id=""files"" name=""files"" accept="".pdf"" multiple />
     <br /><br />
     <input type=""submit"" />
 </form>

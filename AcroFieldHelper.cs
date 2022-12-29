@@ -7,7 +7,19 @@
     {
         public static IEnumerable<AcroFieldBase> GetFields(this AcroForm form)
         {
-            return form.Fields.SelectMany(f => f.GetFields());
+            return form.Fields.GetFields();
+        }
+
+        public static IEnumerable<AcroFieldBase> GetFields(this IEnumerable<AcroFieldBase> fieldBases)
+        {
+            foreach (var fieldBase in fieldBases)
+            {
+                if (fieldBase.FieldType != AcroFieldType.Unknown)
+                    yield return fieldBase;
+                if (fieldBase is AcroNonTerminalField nonTerminalField)
+                    foreach (var child in nonTerminalField.Children.GetFields())
+                        yield return child;
+            }
         }
 
         public static IEnumerable<AcroFieldBase> GetFields(this AcroFieldBase fieldBase)
