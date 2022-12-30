@@ -10,11 +10,11 @@
         {
             List<KeyValuePair<string, string?>> data = new();
             string fileName = string.Empty;
+            ParsingOptions? options = null;
+            if (context.Request.Form.TryGetValue("pass", out var password))
+                options = new() { Password = password };
             foreach (var file in context.Request.Form.Files)
             {
-                ParsingOptions? options = null;
-                if (context.Request.Form.TryGetValue("pass", out var password))
-                    options = new() { Password = password };
                 if (string.IsNullOrEmpty(fileName))
                     fileName = file.FileName.Replace(".pdf", ".csv");
                 using PdfDocument document = PdfDocument.Open(file.OpenReadStream(), options);
