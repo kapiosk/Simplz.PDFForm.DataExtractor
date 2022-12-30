@@ -1,4 +1,4 @@
-﻿namespace Simplz.PDFForm.DataExtractor
+﻿namespace Simplz.PDFForm.DataExtractor.Extensions
 {
     using UglyToad.PdfPig.AcroForms.Fields;
     using UglyToad.PdfPig.AcroForms;
