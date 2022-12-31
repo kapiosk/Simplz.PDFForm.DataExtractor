@@ -30,6 +30,21 @@
             return Results.File(System.Text.Encoding.UTF8.GetBytes(writer.ToString()), "application/csv", fileName.Replace(".pdf", ".csv"));
         }
 
+        internal static IResult GetPDFFormData(HttpContext context)
+        {
+            List<KeyValuePair<string, string?>> data = new();
+            ParsingOptions? options = null;
+            if (context.Request.Form.TryGetValue("pass", out var password))
+                options = new() { Password = password };
+
+            var file = context.Request.Form.Files.Single(f => f.FileName.EndsWith(".pdf"));
+            using PdfDocument document = PdfDocument.Open(file.OpenReadStream(), options);
+            data.Add(new(file.FileName, ""));
+            if (document.TryGetForm(out var form))
+                data.AddRange(form.GetFields().Select(c => c.GetFieldValue()));
+            return Results.Json(data);
+        }
+
         internal static IResult UploadFile(HttpContext context)
         {
             List<KeyValuePair<string, string?>> data = new();
@@ -51,7 +66,7 @@
             stream.CopyTo(memoryStream);
             memoryStream.Position = 0;
             using var spreadsheetDocument = SpreadsheetDocument.Open(memoryStream, true);
-            if(spreadsheetDocument.WorkbookPart is not null)
+            if (spreadsheetDocument.WorkbookPart is not null)
                 spreadsheetDocument.WorkbookPart.AddDataToTemplate(data);
             spreadsheetDocument.Save();
             spreadsheetDocument.Close();
