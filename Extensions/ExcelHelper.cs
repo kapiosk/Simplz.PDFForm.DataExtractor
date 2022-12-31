@@ -64,6 +64,50 @@
             }
         }
 
+        private static string GetExcelColumnName(uint columnNumber)
+        {
+            string columnName = "";
+
+            while (columnNumber > 0)
+            {
+                uint modulo = (columnNumber - 1) % 26;
+                columnName = Convert.ToChar('A' + modulo) + columnName;
+                columnNumber = (columnNumber - modulo) / 26;
+            }
+
+            return columnName;
+        }
+
+        private static Cell? InsertCell(this Worksheet worksheet, uint rowIndex, uint columnIndex)
+        {
+            Row? row = null;
+            Cell? cell = null;
+            var sheetData = worksheet.GetFirstChild<SheetData>();
+            if (sheetData is not null)
+            {
+                row = sheetData.Elements<Row>().FirstOrDefault(r => r.RowIndex is not null && r.RowIndex.Value == rowIndex);
+                if (row is null)
+                {
+                    row = new Row() { RowIndex = rowIndex };
+                    sheetData.Append(row);
+                }
+
+                var columnName = GetExcelColumnName(columnIndex);
+                var cellReference = columnName + rowIndex;
+
+                cell = row.Elements<Cell>().FirstOrDefault(c => c.CellReference is not null && c.CellReference.Value == cellReference);
+                if (cell is null)
+                {
+                    cell = new() { CellReference = cellReference };
+                    if (row.ChildElements.Count < columnIndex)
+                        row.AppendChild(cell);
+                    else
+                        row.InsertAt(cell, (int)columnIndex);
+                }
+            }
+            return cell;
+        }
+
         private static string GetCellReference(this Cell cell)
         {
             return cell.CellReference?.Value ?? "";
