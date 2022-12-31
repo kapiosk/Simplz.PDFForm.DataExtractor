@@ -17,7 +17,7 @@ app.MapPost("/UploadFiles", Endpoints.UploadFiles);
 app.MapGet("/UploadFile", () => Results.Content(@"
 <form action=""/UploadFile"" enctype=""multipart/form-data"" method=""post"">
     <input type=""file"" id=""filePDF"" name=""filePDF"" accept="".pdf"" />
-    <input type=""file"" id=""fileCSV"" name=""fileCSV"" accept="".csv"" />
+    <input type=""file"" id=""fileExcel"" name=""fileExcel"" accept="".xlsx"" />
     <input type=""submit"" />
 </form>
 ", "text/html"));
